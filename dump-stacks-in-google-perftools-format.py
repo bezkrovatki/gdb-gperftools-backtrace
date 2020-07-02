@@ -192,7 +192,7 @@ class DumpStacksAsGPerfTools (gdb.Command):
                 dump.add_list_of_mapped_objects(line.decode())
 
     class ThreadsToFocusOn:
-        class InvalidThreadId(LookupError):
+        class NoThreadsMatch(LookupError):
             def __init__(self, message):
                 self.message = message
 
@@ -203,15 +203,12 @@ class DumpStacksAsGPerfTools (gdb.Command):
                 lwpid = thread.ptid[1]
                 if not lwpid:
                     lwpid = thread.ptid[2]
-                found = False
                 for a in [str(thread.num), str(lwpid), thread.name]:
                     if a in aliases:
-                        aliases.remove(a)
-                        found = True
-                if found:
-                    focus.append(thread)
-            if aliases:
-                raise self.InvalidThreadId('No threads match "{}"'.format(str(aliases)))
+                        focus.append(thread)
+                        break
+            if not focus:
+                raise self.NoThreadsMatch('No threads match "{}"'.format(str(aliases)))
 
             self.focus = focus
 

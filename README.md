@@ -13,7 +13,7 @@ So there was a great tool to visualize huge call graph, I only needed to put thr
 1. Clone this repo or just download dump-stacks-in-google-perftools-format.p
 2. Attach to a running process or open a core dump file with GDB.
 3. (gdb) source /path/to/dump-stacks-in-google-perftools-format.py
-4. (gdb) gbt /filepath/to/store/profile/into
+4. (gdb) gbt --output /filepath/to/store/profile/into [thread-id0 [thread-name1 [...]]]
 5. Visualize the call graph with pprof. For example:
     `google-pprof --pdf --nodecount=100000 --nodefraction=0 --edgefraction=0 --addresses --ignore '.*(NotVeryInterestingFunction).*' /path/to/profile > callgraph.pdf`
     

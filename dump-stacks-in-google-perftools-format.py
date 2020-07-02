@@ -237,7 +237,7 @@ class DumpStacksAsGPerfTools (gdb.Command):
         parser.add_argument("--core-maps-from-info-proc-mapping", action="store_true", help="build objects map from the command 'info proc mapping' output")
         parser.add_argument("--core-maps-from-file", action="store", help="read objects map from the specified file")
         parser.add_argument("--core-maps-from-command", action="store", help="read objects map from the specified command")
-        parser.add_argument("output", action="store", help="output profile file")
+        parser.add_argument("--output", action="store", help="output profile file")
         parser.add_argument("threads", nargs=argparse.REMAINDER, help="threads to focus on. All threads will be included by default")
         opts = parser.parse_args(gdb.string_to_argv(arg))
 

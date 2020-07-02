@@ -73,19 +73,13 @@ class DumpStacksAsGPerfTools (gdb.Command):
         def add_list_of_mapped_objects(self, vmmap):
             self.maps += vmmap
 
-        def add_frame(self, addr, symbol_name, is_inline):
+        def add_frame(self, addr, symbol_name, frame_type):
             self.threads[-1].append(addr)
             if not symbol_name or not self.include_symbols:
                 return
             pc = self.symbol_map.get(addr, [])
-            #sys.stdout.write('pc: {}\n'.format(pc))
             if not symbol_name in pc:
-                if is_inline:
-                    pc.append(symbol_name)
-                else:
-                    new_pc = [ symbol_name ]
-                    new_pc.extend( pc )
-                    pc = new_pc
+                pc.append(symbol_name)
                 self.symbol_map[addr] = pc
 
         def add_thread(self, index, lwpid, name):
@@ -96,7 +90,7 @@ class DumpStacksAsGPerfTools (gdb.Command):
                 self.__write_symbol_page_header()
                 self.__write_str('binary={}\n'.format(binary))
                 for (k, v) in self.symbol_map.items():
-                    self.__write_symbol(k, v)
+                    self.__write_symbol(k, reversed(v))
                 self.__write_symbol_page_trailer()
                 self.__write_str('--- profile\n')
             self.__write_binary_header()
@@ -116,8 +110,8 @@ class DumpStacksAsGPerfTools (gdb.Command):
         def add_list_of_mapped_objects(self, vmmap):
             sys.stdout.write(vmmap)
 
-        def add_frame(self, addr, symbol_name, is_inline):
-            sys.stdout.write('#{}\t0x{:016x}\t{}\n'.format(self.frame_no, addr, symbol_name))
+        def add_frame(self, addr, symbol_name, frame_type):
+            sys.stdout.write('#{}\t0x{:016x}\t{}\t{}\n'.format(self.frame_no, addr, symbol_name, frame_type))
             self.frame_no += 1
 
         def add_thread(self, index, lwpid, name):
@@ -284,8 +278,12 @@ class DumpStacksAsGPerfTools (gdb.Command):
                 fun = frame.function()
                 symbol_name = ''
                 if fun:
-                    symbol_name = '{} at {}:{}'.format(fun.print_name, fun.symtab.filename, fun.line)
-                dump.add_frame(addr, symbol_name, gdb.INLINE_FRAME == frame.type())
+                    sal = frame.find_sal()
+                    if sal:
+                        symbol_name = '{} at {}:{}'.format(fun.print_name, sal.symtab.filename, sal.line)
+                    else:
+                        symbol_name = '{} at {}:{}'.format(fun.print_name, fun.symtab.filename, fun.line)
+                dump.add_frame(addr, symbol_name, frame.type())
                 frame = frame.older()
 
         selected_thread.switch()

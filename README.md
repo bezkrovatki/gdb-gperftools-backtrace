@@ -15,11 +15,11 @@ So there was a great tool to visualize huge call graph, I only needed to put thr
 3. (gdb) source /path/to/dump-stacks-in-google-perftools-format.py
 4. (gdb) gbt --output /filepath/to/store/profile/into [thread-id0 [thread-name1 [...]]]
 5. Visualize the call graph with pprof. For example:
-    `google-pprof --pdf --nodecount=100000 --nodefraction=0 --edgefraction=0 --addresses --ignore '.*(NotVeryInterestingFunction).*' /path/to/profile > callgraph.pdf`
-    
+    `google-pprof --pdf --nodecount=100000 --nodefraction=0 --edgefraction=0 --addresses --ignore '.*(NotVeryInterestingFunction).*' /path/to/binary /path/to/profile > callgraph.pdf`
+
 **NOTE:** one can see all options of the *gbt* command with *--help* flag.
 
 ## Known issues
 * It turned out that *addr2line* utility which *google-pprof* uses to obtain function name and source line information for instruction addresses may in some cases report incorrect function names (observed on Ubuntu 18.04). Possible workarounds are 
-  - supply the option *--include-symbols* when generating profile and use [this version of pprof tool](https://github.com/bezkrovatki/gperftools/blob/master/src/pprof) to visualize;
+  - supply the option *--include-symbols* when generating profile and use [this version of pprof tool](https://github.com/bezkrovatki/gperftools/blob/master/src/pprof) to visualize ommiting /path/to/binary parameter;
   - force google-pprof to use eu-addr2line (from elfutils package) utility instead of addr2line

@@ -283,6 +283,15 @@ class DumpStacksAsGPerfTools (gdb.Command):
                         symbol_name = '{} at {}:{}'.format(fun.print_name, sal.symtab.filename, sal.line)
                     else:
                         symbol_name = '{} at {}:{}'.format(fun.print_name, fun.symtab.filename, fun.line)
+                else:
+                    symbol_info = gdb.execute("info symbol 0x{:x}".format(addr), False, True)
+                    if symbol_info:
+                        match = re.match('(\S+)\s+[+]\s+([0-9A-Fa-f]+)\s+in\s+section\s+([.]\S+)\s+of\s+([/].+)', symbol_info)
+                        if match:
+                            symbol_name = '{} at {}:??'.format(match.group(1), match.group(4))
+                        else:
+                            symbol_name = '?? at {}:??'.format(gdb.solib_name(addr))
+     
                 dump.add_frame(addr, symbol_name, frame.type())
                 frame = frame.older()
 

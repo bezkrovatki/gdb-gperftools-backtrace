@@ -7,10 +7,11 @@ MS Visual Studio has Parallel Stacks window that can visualize all threads as a 
 * draw a call graph for me and export it in different formats, 
 * store it in the [Valgrind's Callgrind](https://valgrind.org/docs/manual/cl-manual.html) compatible format to be visualized/analyzed further with [KCachegrind](https://kcachegrind.github.io/html/Home.html),
 * filter the call paths or focus on particular function/sources.
+
 So there was a great tool to visualize huge call graph, I only needed to put threads backtraces into the format compatible with it.
 
 ## Usage
-1. Clone this repo or just download dump-stacks-in-google-perftools-format.p
+1. Clone this repo or just download dump-stacks-in-google-perftools-format.py
 2. Attach to a running process or open a core dump file with GDB.
 3. (gdb) source /path/to/dump-stacks-in-google-perftools-format.py
 4. (gdb) gbt --output /filepath/to/store/profile/into [thread-id0 [thread-name1 [...]]]
